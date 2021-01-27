@@ -21,6 +21,12 @@ public class MainWindow {
         }
     };
 
+
+    public void initElements() {
+        createButtons();
+    }
+
+
     public void createButtons() {
 
 
@@ -28,10 +34,8 @@ public class MainWindow {
             for (int y = 0; y < 3; y++) {
                 Button button = new Button();
 
-                button.minWidth(60);
-                button.minHeight(60);
-                button.maxWidth(100);
-                button.maxHeight(100);
+                button.setMaxHeight(Double.MAX_VALUE);
+                button.setMaxWidth(Double.MAX_VALUE);
                 button.setOnAction(buttonHandler);
                 pane.add(button, x, y);
 
@@ -39,6 +43,5 @@ public class MainWindow {
             }
         }
     }
-
 
 }
