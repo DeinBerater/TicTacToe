@@ -34,9 +34,12 @@ public class MainWindow {
             for (int y = 0; y < 3; y++) {
                 Button button = new Button();
 
+                button.setPrefHeight(100);
+                button.setPrefWidth(100);
                 button.setMaxHeight(Double.MAX_VALUE);
                 button.setMaxWidth(Double.MAX_VALUE);
                 button.setOnAction(buttonHandler);
+                button.setStyle("-fx-font-size:45");
                 pane.add(button, x, y);
 
 
