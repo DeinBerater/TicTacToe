@@ -17,37 +17,37 @@ public class MainWindow {
     public GridPane pane;
     public HBox hBox;
 
-    EventHandler<MouseEvent> mouseExitedListener = actionEvent -> {
+    private String turn = "x";
+    String[][] field;
+    EventHandler<MouseEvent> mouseEnteredHandler = actionEvent -> {
         EventTarget target = actionEvent.getTarget();
-        if (target instanceof Button) { // check if clicked element was a button
+        if (target instanceof Button) { // check if hovered element is a button
+            Button button = (Button) target; // set  the object to a button
+            button.setText(turn);
+        }
+
+    };
+    EventHandler<MouseEvent> mouseExitedHandler = actionEvent -> {
+        EventTarget target = actionEvent.getTarget();
+        if (target instanceof Button) { // check if hovered element was a button
             Button button = (Button) target; // set  the object to a button
             button.setText("");
-
         }
     };
-    private String turn = "x";
-    String[][] field = new String[3][3];
-
-
     EventHandler<ActionEvent> actionEventHandler = actionEvent -> {
         EventTarget target = actionEvent.getTarget();
-        if (target instanceof Button) { // check if clicked element was a button
-            Button button = (Button) target; // set  the object to a button
-            button.setOnAction(null);
-            button.setOnMouseEntered(null);
-            button.setOnMouseExited(null);
-            button.setStyle("-fx-font-size:45; -fx-text-fill: #000000");
-            button.setText(turn);
+        if (target instanceof Button) { // check if clicked element is a button
+            Button buttonTarget = (Button) target; // set  the object to a button
+            buttonTarget.setOnAction(null);
+            buttonTarget.setOnMouseEntered(null);
+            buttonTarget.setOnMouseExited(null);
+            buttonTarget.setStyle("-fx-font-size:45; -fx-text-fill: #000000");
+            buttonTarget.setText(turn);
 
-            field[GridPane.getRowIndex(button)][GridPane.getColumnIndex(button)] = turn;
-
-//            System.out.println();
-//            for (String[] row : field)
-//                System.out.println(Arrays.toString(row));
-//            System.out.println();
+            field[GridPane.getRowIndex(buttonTarget)][GridPane.getColumnIndex(buttonTarget)] = turn;
 
 
-            ArrayList<Point> winCoords = CheckForWin(button);
+            ArrayList<Point> winCoords = CheckForWin(buttonTarget);
             if (winCoords != null) {
                 // win
                 for (Point point : winCoords) {
@@ -61,18 +61,30 @@ public class MainWindow {
                     }
 
                 }
-            }
-            changeTurn();
-        }
-    };
-    EventHandler<MouseEvent> mouseEnteredListener = actionEvent -> {
-        EventTarget target = actionEvent.getTarget();
-        if (target instanceof Button) { // check if clicked element was a button
-            Button button = (Button) target; // set  the object to a button
-            button.setText(turn);
-        }
 
+                ObservableList<Node> children = pane.getChildren();
+
+                for (Node node : children) { // loop every element in the pane
+                    if (node instanceof Button) {
+                        Button button = (Button) node;
+
+                        button.setOnMouseEntered(null);
+                        button.setOnMouseExited(null);
+
+                        button.setOnAction(resetActionEventHandler);
+                    }
+                }
+
+            }
+            switchTurn();
+        }
     };
+    EventHandler<ActionEvent> resetActionEventHandler = actionEvent -> {
+        EventTarget target = actionEvent.getTarget();
+        resetButtons();
+    };
+
+
 
     public ArrayList<Point> CheckForWin(final Button button) {
 
@@ -159,7 +171,7 @@ public class MainWindow {
         return result;
     }
 
-    public void changeTurn() {
+    public void switchTurn() {
         if (turn.equals("x")) {
             turn = "o";
         } else if (turn.equals("o")) {
@@ -169,6 +181,7 @@ public class MainWindow {
 
     public void initElements() {
         createButtons();
+        resetButtons();
     }
 
 
@@ -183,18 +196,30 @@ public class MainWindow {
                 button.setPrefWidth(100);
                 button.setMaxHeight(Double.MAX_VALUE);
                 button.setMaxWidth(Double.MAX_VALUE);
-                button.setOnAction(actionEventHandler);
-
-                button.setStyle("-fx-font-size:45; -fx-text-fill: gray");
-                button.setOpacity(30);
-
-
-                button.setOnMouseEntered(mouseEnteredListener);
-                button.setOnMouseExited(mouseExitedListener);
 
                 pane.add(button, x, y);
 
+            }
+        }
+    }
 
+    public void resetButtons() {
+        ObservableList<Node> children = pane.getChildren();
+
+        for (Node node : children) {
+            if (node instanceof Button) {
+                Button button = (Button) node;
+                button.setText("");
+                button.setStyle("-fx-font-size:45; -fx-text-fill: gray");
+                button.setOpacity(30);
+
+                button.setOnAction(actionEventHandler);
+
+                button.setOnMouseEntered(mouseEnteredHandler);
+                button.setOnMouseExited(mouseExitedHandler);
+
+                // redeclare two dimensional array field
+                field = new String[3][3];
             }
         }
     }
