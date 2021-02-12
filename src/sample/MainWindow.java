@@ -19,6 +19,8 @@ public class MainWindow {
 
     private String turn = "x";
     String[][] field;
+
+
     EventHandler<MouseEvent> mouseEnteredHandler = actionEvent -> {
         EventTarget target = actionEvent.getTarget();
         if (target instanceof Button) { // check if hovered element is a button
@@ -27,6 +29,7 @@ public class MainWindow {
         }
 
     };
+
     EventHandler<MouseEvent> mouseExitedHandler = actionEvent -> {
         EventTarget target = actionEvent.getTarget();
         if (target instanceof Button) { // check if hovered element was a button
@@ -34,6 +37,11 @@ public class MainWindow {
             button.setText("");
         }
     };
+
+    EventHandler<ActionEvent> resetActionEventHandler = actionEvent -> {
+        resetButtons();
+    };
+
     EventHandler<ActionEvent> actionEventHandler = actionEvent -> {
         EventTarget target = actionEvent.getTarget();
         if (target instanceof Button) { // check if clicked element is a button
@@ -78,10 +86,6 @@ public class MainWindow {
             }
             switchTurn();
         }
-    };
-    EventHandler<ActionEvent> resetActionEventHandler = actionEvent -> {
-        EventTarget target = actionEvent.getTarget();
-        resetButtons();
     };
 
 
