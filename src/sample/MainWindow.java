@@ -1,12 +1,17 @@
 package sample;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 public class MainWindow {
     public GridPane pane;
@@ -21,6 +26,9 @@ public class MainWindow {
         }
     };
     private String turn = "x";
+    String[][] field = new String[3][3];
+
+
     EventHandler<ActionEvent> actionEventHandler = actionEvent -> {
         EventTarget target = actionEvent.getTarget();
         if (target instanceof Button) { // check if clicked element was a button
@@ -28,12 +36,33 @@ public class MainWindow {
             button.setOnAction(null);
             button.setOnMouseEntered(null);
             button.setOnMouseExited(null);
-            button.setStyle("-fx-font-size:45; -fx-text-fill: black");
+            button.setStyle("-fx-font-size:45; -fx-text-fill: #000000");
             button.setText(turn);
-            CheckRowForSameItems((int) button.getTranslateX(), (int) button.getTranslateY(), Direction.DOWN);
+
+            field[GridPane.getRowIndex(button)][GridPane.getColumnIndex(button)] = turn;
+
+//            System.out.println();
+//            for (String[] row : field)
+//                System.out.println(Arrays.toString(row));
+//            System.out.println();
+
+
+            ArrayList<Point> winCoords = CheckForWin(button);
+            if (winCoords != null) {
+                // win
+                for (Point point : winCoords) {
+
+                    Node node = getNodeByRowColumnIndex(point.x, point.y, pane);
+
+                    if (node instanceof Button) { // check if the element is a button
+                        Button targetButton = (Button) node; // set the node to a button
+
+                        targetButton.setStyle("-fx-font-size:45; -fx-text-fill: #12b012");
+                    }
+
+                }
+            }
             changeTurn();
-
-
         }
     };
     EventHandler<MouseEvent> mouseEnteredListener = actionEvent -> {
@@ -45,11 +74,89 @@ public class MainWindow {
 
     };
 
-    public boolean CheckRowForSameItems(final int x, final int y, Direction direction) {
-        if (x == 0 && y == 0) {
-            System.out.println(pane.getChildren().get(2).getLayoutX());
+    public ArrayList<Point> CheckForWin(final Button button) {
+
+
+        int x = GridPane.getColumnIndex(button);
+        int y = GridPane.getRowIndex(button);
+
+
+        ArrayList<Point> points = new ArrayList<>();
+        // check for the same items in the row
+        for (int i = 0; i < field.length; i++) { // check the columns in the row for the right item
+            if (field[y][i] == null || !field[y][i].equals(turn)) {
+                // stop when an item does not match
+                break;
+            }
+            points.add(new Point(i, y));
+            if (i == field.length - 1) { // If it's the last item, all items must be correct because else it would leave the loop
+                return points;
+            }
         }
-        return true;
+
+        points.clear();
+        // check for the same items in the column
+        for (int i = 0; i < field[0].length; i++) { // check the rows in the column for the right item
+            if (field[i][x] == null || !field[i][x].equals(turn)) {
+                // stop when an item does not match
+                break;
+            }
+            points.add(new Point(x, i));
+            if (i == field[0].length - 1) { // If it's the last item, all items must be correct because else it would leave the loop
+                return points;
+            }
+        }
+
+        if (x == y) {
+            points.clear();
+            // check if something was placed in the diagonal way from top left to bottom right
+            for (int i = 0; i < field[0].length; i++) { // check the diagonal way for the right item
+                if (field[i][i] == null || !field[i][i].equals(turn)) {
+                    // stop when an item does not match
+                    break;
+                }
+                points.add(new Point(i, i));
+                if (i == field.length - 1) { // If it's the last item, all items must be correct because else it would leave the loop
+                    return points;
+                }
+            }
+        }
+
+
+        points.clear();
+        if (x == (field.length - 1) - y) {
+            int lastSlot = field.length - 1;
+
+            // check if something was placed in the diagonal way from bottom left to top right
+            for (int i = 0; i < field[0].length; i++) { // check the diagonal way for the right item
+
+                if (field[lastSlot - i][i] == null || !field[lastSlot - i][i].equals(turn)) {
+                    // stop when an item does not match
+                    break;
+                }
+                points.add(new Point(i, lastSlot - i));
+                if (i == field.length - 1) { // If it's the last item, all items must be correct because else it would leave the loop
+                    return points;
+                }
+            }
+        }
+
+
+        return null;
+    }
+
+    public Node getNodeByRowColumnIndex(final int x, final int y, GridPane gridPane) {
+        Node result = null;
+        ObservableList<Node> children = gridPane.getChildren();
+
+        for (Node node : children) {
+            if (GridPane.getColumnIndex(node) == x && GridPane.getRowIndex(node) == y) {
+                result = node;
+                break;
+            }
+        }
+
+        return result;
     }
 
     public void changeTurn() {

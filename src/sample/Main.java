@@ -23,7 +23,6 @@ public class Main extends Application {
 
         MainWindow mainWindow = loader.getController();
         mainWindow.initElements();
-        mainWindow.createButtons();
 
         primaryStage.show();
     }
