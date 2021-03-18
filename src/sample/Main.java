@@ -14,7 +14,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("window.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("Tic Tac Toe");
         primaryStage.setMinWidth(500);

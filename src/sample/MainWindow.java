@@ -10,7 +10,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class MainWindow {
@@ -60,7 +59,7 @@ public class MainWindow {
                 // win
                 for (Point point : winCoords) {
 
-                    Node node = getNodeByRowColumnIndex(point.x, point.y, pane);
+                    Node node = getNodeByRowColumnIndex(point.getX(), point.getY(), pane);
 
                     if (node instanceof Button) { // check if the element is a button
                         Button targetButton = (Button) node; // set the node to a button
